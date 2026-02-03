@@ -278,14 +278,13 @@ namespace pet{
 		return total;
 	}
 
-	void Block::debugPrint() const {
-		// 修复：将 calculateAll() 调用前去掉 const 限定符
-		const_cast<Block*>(this)->calculateAll();
+	void Block::debugPrint() {
+		calculateAll();
 		std::cout << "Block Debug Print:" << std::endl;
 		std::cout << "存储边数量:" << occupied_count << std::endl;
 		std::cout << "负载因子:" << load_factor << std::endl;
-		std::cout << "内存使用(字节):" << memory_used << std::endl;
-		std::cout << "理论内存使用(字节):" << memory_in_theory << std::endl;
+		std::cout << "内存使用:" << memory_used << "B" << std::endl;
+		std::cout << "理论内存占用:" << memory_in_theory << "B" << std::endl;
 	}
 
 	void Block::calculateAll() {
@@ -299,6 +298,6 @@ namespace pet{
 		load_factor = static_cast<float>(occupied_count) / static_cast<float>(block_size);
 		size_t fp_array_size = (static_cast<size_t>(bits_used) * block_size + 63) / 64;
 		memory_used = sizeof(char) * block_size + sizeof(uint64_t) * (2 * fp_array_size + block_size);
-		memory_in_theory = sizeof(char) * block_size + sizeof(uint64_t) * (2 * ((static_cast<size_t>(bits_used) * block_size + 63) / 64) + block_size);
+		memory_in_theory = sizeof(char) * occupied_count + sizeof(uint32_t) * (2 * occupied_count) + sizeof(uint64_t) * occupied_count;
 	}
 }

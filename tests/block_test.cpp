@@ -87,7 +87,7 @@ void BlockTest::makeIrregularInsert() {
     size_t success = 0;
     size_t fail = 0;
 
-    for (size_t i = 0; i < 1000; ++i) {
+    for (size_t i = 0; i < 6000; ++i) {
         uint32_t s = dist_fp(rng);
         uint32_t d = dist_fp(rng);
         uint64_t val = i + 1;

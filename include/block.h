@@ -37,7 +37,7 @@ namespace pet {
 		size_t offset(int row, int col) const;
 
 	public:
-		void debugPrint() const;
+		void debugPrint();
 	private:
 		float load_factor = 0.0;
 		int occupied_count = 0;
