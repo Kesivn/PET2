@@ -37,6 +37,7 @@ set(PET2_SOURCES
     "src/petnode.cpp"
     src/block.cpp
     "src/auxo.cpp"
+    "tests/block_test.cpp"
 )
 
 # ========================
@@ -44,7 +45,7 @@ set(PET2_SOURCES
 # ========================
 add_library(pet2 STATIC
     ${PET2_SOURCES}
- "include/block.h")
+ "include/block.h" "tests/block_test.h")
 
 target_include_directories(pet2 PUBLIC
     ${PROJECT_SOURCE_DIR}/include
@@ -55,7 +56,7 @@ target_include_directories(pet2 PUBLIC
 # ========================
 add_executable(pet2_main
     main.cpp
- "include/block.h")
+ "include/block.h" "tests/block_test.h")
 
 target_link_libraries(pet2_main
     pet2
