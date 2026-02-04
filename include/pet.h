@@ -33,6 +33,6 @@ namespace pet {
 
 
 	public:
-		void debugPrint() const;
+		void debugPrint(bool show_details = false) const;
 	};
 }//namespace pet

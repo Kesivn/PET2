@@ -278,26 +278,34 @@ namespace pet{
 		return total;
 	}
 
-	void Block::debugPrint() {
-		calculateAll();
+	void Block::debugPrint() const {
+		Block_Monitor monitor =calculateAll();
 		std::cout << "Block Debug Print:" << std::endl;
-		std::cout << "存储边数量:" << occupied_count << std::endl;
-		std::cout << "负载因子:" << load_factor << std::endl;
-		std::cout << "内存使用:" << memory_used << "B" << std::endl;
-		std::cout << "理论内存占用:" << memory_in_theory << "B" << std::endl;
+		std::cout << "存储边数量:" << monitor.occupied_count << std::endl;
+		std::cout << "负载因子:" << monitor.load_factor << std::endl;
+		std::cout << "内存使用:" << monitor.memory_used << "B" << std::endl;
+		std::cout << "理论内存占用:" << monitor.memory_in_theory << "B" << std::endl;
 	}
 
-	void Block::calculateAll() {
+	Block_Monitor Block::calculateAll() const {
 		size_t block_size = BLOCK_PARAMETER::BLOCK_ROWS * BLOCK_PARAMETER::BLOCK_ROWS;
-		occupied_count = 0;
+		int occupied_count = 0;
 		for (size_t i = 0; i < block_size; i++) {
 			if (occupied_array[i] != 0) {
 				occupied_count++;
 			}
 		}
-		load_factor = static_cast<float>(occupied_count) / static_cast<float>(block_size);
+		float load_factor = static_cast<float>(occupied_count) / static_cast<float>(block_size);
 		size_t fp_array_size = (static_cast<size_t>(bits_used) * block_size + 63) / 64;
-		memory_used = sizeof(char) * block_size + sizeof(uint64_t) * (2 * fp_array_size + block_size);
-		memory_in_theory = sizeof(char) * occupied_count + sizeof(uint32_t) * (2 * occupied_count) + sizeof(uint64_t) * occupied_count;
+		uint64_t memory_used = sizeof(char) * block_size + sizeof(uint64_t) * (2 * fp_array_size + block_size);
+		uint64_t memory_in_theory = sizeof(char) * occupied_count + sizeof(uint32_t) * (2 * occupied_count) + sizeof(uint64_t) * occupied_count;
+		Block_Monitor monitor{
+			load_factor,
+			occupied_count,
+			memory_used,
+			memory_in_theory
+		};
+		return monitor;
+
 	}
 }

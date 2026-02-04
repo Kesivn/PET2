@@ -13,6 +13,13 @@ namespace pet {
 		static const int HASH_NUMS = 5;
 	};
 
+	struct Block_Monitor {
+		float load_factor = 0.0;
+		int occupied_count = 0;
+		uint64_t memory_used = 0;
+		uint64_t memory_in_theory = 0;
+	};
+
 	class Block {
 	public:
 		Block();
@@ -37,15 +44,16 @@ namespace pet {
 		size_t offset(int row, int col) const;
 
 	public:
-		void debugPrint();
+		Block_Monitor calculateAll() const;
+		void debugPrint() const;
 	private:
-		float load_factor = 0.0;
+		/*float load_factor = 0.0;
 		int occupied_count = 0;
 
 		uint64_t memory_used = 0;
 		uint64_t memory_in_theory = 0;
-
-		void calculateAll();
+		*/
+		//void calculateAll();
 	};
 
 }

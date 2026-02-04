@@ -32,4 +32,38 @@ Block& PetNode::get_block() {
     return block;
 }
 
+uint32_t PetNode::trim_fp(uint32_t fp) const {
+    return fp & ((1u << (32 - depth)) - 1u);
+}
+
+bool PetNode::insert(uint32_t fp_src, uint32_t fp_dst, uint64_t value) {
+    uint32_t trimmed_src = trim_fp(fp_src);
+    uint32_t trimmed_dst = trim_fp(fp_dst);
+    return block.insert(trimmed_src, trimmed_dst, value);
+}
+
+std::optional<uint64_t> PetNode::queryEdge(uint32_t fp_src, uint32_t fp_dst) const {
+    uint32_t trimmed_src = trim_fp(fp_src);
+    uint32_t trimmed_dst = trim_fp(fp_dst);
+    return block.queryEdge(trimmed_src, trimmed_dst);
+}
+
+std::optional<uint64_t> PetNode::queryInDegree(uint32_t fp_dst) const {
+    uint32_t trimmed_dst = trim_fp(fp_dst);
+    return block.queryInDegree(trimmed_dst);
+}
+
+std::optional<uint64_t> PetNode::queryOutDegree(uint32_t fp_src) const {
+    uint32_t trimmed_src = trim_fp(fp_src);
+    return block.queryOutDegree(trimmed_src);
+}
+
+Block_Monitor PetNode::getBlockMonitor() const {
+	return block.calculateAll();
+}
+
+void PetNode::debugPrint(int idx) const {
+    std::cout << idx << "ºÅ¿éÐÅÏ¢" << ":\n";
+    block.debugPrint();
+}
 } // namespace pet
