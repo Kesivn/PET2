@@ -30,8 +30,15 @@ namespace pet {
 		PetNode* leaf = findLeafNode(src, dst);
 		return leaf->insert(src, dst, value);
 
-		//to do
-		//拓展逻辑的实现
+		if (!leaf->insert(src, dst, value)) {
+			if(leaf->get_depth()<32){
+				//需要扩展
+				state = State::expand;
+				do_expand();
+				return insert(src, dst, value);
+			}
+		}
+		
 	}
 
 	std::optional<uint64_t> Pet::queryEdge(uint32_t src, uint32_t dst) const {
@@ -102,6 +109,25 @@ namespace pet {
 		}
 		return total_out_degree == 0 ? std::nullopt : std::optional<uint64_t>(total_out_degree);
 		
+	}
+
+	void Pet::do_expand(){
+		//扩展整个树
+		std::queue<PetNode*> q;
+		q.push(root);
+		while(!q.empty()){
+			PetNode* current = q.front();
+			q.pop();
+			if(current->is_leaf()){
+				current->expand();
+			}else{
+				for(int i = 0; i < 4; i++){
+					q.push(current->get_child(i));
+				}
+			}
+		}
+		tree_height++;
+		state = State::nomal;
 	}
 
 	void Pet::debugPrint(bool show_details) const {

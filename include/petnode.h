@@ -14,19 +14,16 @@ namespace pet {
 		int get_depth() const;
 		PetNode* get_child(int index) const;
 
-		//Block& get_block();
-
-		//to do
-		void expand(){}
+		void expand();
 
 
 	private:
 		int depth;
-		Block block;
+		Block* block = nullptr;
 		std::vector<PetNode*> children;
 		//四叉，分别代表嵌入00，01，10，11
 
-		Block& get_block();
+		Block* get_block();
 
 	public:
 		bool insert(uint32_t fp_src, uint32_t fp_dst, uint64_t value);

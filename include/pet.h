@@ -29,7 +29,7 @@ namespace pet {
 		};
 		State state = State::nomal;
 
-		void do_expand() {};
+		void do_expand();
 
 
 	public:
