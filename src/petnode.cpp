@@ -17,6 +17,7 @@ PetNode::~PetNode() {
         delete child;
     }
     children.clear();
+	delete block;
 }
 
 bool PetNode::is_leaf() const {
@@ -55,33 +56,22 @@ void PetNode::expand() {
 
     while (it.hasNext()) {
         Edge e = it.next();
-        uint32_t src_trimmed = e.fp_src; // already trimmed to (32 - depth) bits
-        uint32_t dst_trimmed = e.fp_dst;
+        //从block中取出的是没有前缀的
+        uint32_t src = e.fp_src; 
+        uint32_t dst = e.fp_dst;
 
-        // determine bit for quadrant
+        //路由子节点
         uint32_t src_bit = 0u;
         uint32_t dst_bit = 0u;
         if (block_bits > 0) {
             uint32_t shift = static_cast<uint32_t>(block_bits - 1);
-            src_bit = (src_trimmed >> shift) & 1u;
-            dst_bit = (dst_trimmed >> shift) & 1u;
+            src_bit = (src >> shift) & 1u;
+            dst_bit = (dst >> shift) & 1u;
         }
         uint32_t quadrant = (src_bit << 1) | dst_bit;
-
-        // compute child's trimmed fingerprints (for depth+1): remove that MSB
-        uint32_t child_mask = 0u;
-        if (block_bits - 1 > 0) {
-            uint32_t kept_child = static_cast<uint32_t>(block_bits - 1); // 32 - (depth+1)
-            child_mask = (kept_child == 32) ? ~0u : ((1u << kept_child) - 1u);
-        } else {
-            child_mask = 0u;
-        }
-        uint32_t child_src = src_trimmed & child_mask;
-        uint32_t child_dst = dst_trimmed & child_mask;
-
-        // insert directly into child's block (bypass child's trim)
-        children[quadrant]->block->insert(child_src, child_dst, e.value);
+		children[quadrant]->insert(src, dst, e.value);//子节点的方法会实现裁剪
     }
+    delete block;
     block = nullptr;
 }
 
@@ -91,11 +81,12 @@ bool PetNode::insert(uint32_t fp_src, uint32_t fp_dst, uint64_t value) {
     int fail_times = 0;
     //每次插入失败rehash，3次后上报至pet
     while (!block->insert(trimmed_src, trimmed_dst, value)) {
+        fail_times++;
         if (fail_times >= 3) {
             return false;
         }
         block->rehash();
-        fail_times++;
+
     }
     return true;
 }
